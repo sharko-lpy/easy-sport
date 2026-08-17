@@ -91,6 +91,7 @@ create table if not exists public.programs (
   coach_id uuid not null references public.profiles (id) on delete cascade,
   title text not null,
   description text,
+  is_default boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -121,7 +122,8 @@ create policy "programs: un athlète voit les programmes qui lui sont assignés"
   on public.programs for select
   to authenticated
   using (
-    exists (
+    is_default = true
+    or exists (
       select 1 from public.program_assignments pa
       where pa.program_id = programs.id
         and pa.athlete_id = auth.uid()
@@ -196,6 +198,11 @@ create policy "exercises: un athlète voit les exercices de ses programmes"
   to authenticated
   using (
     exists (
+      select 1 from public.programs p
+      where p.id = program_exercises.program_id
+        and p.is_default = true
+    )
+    or exists (
       select 1 from public.program_assignments pa
       where pa.program_id = program_exercises.program_id
         and pa.athlete_id = auth.uid()
