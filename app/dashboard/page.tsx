@@ -17,6 +17,10 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single();
 
+  if (profile?.role === "admin") {
+    redirect("/admin");
+  }
+
   if (profile?.role === "coach") {
     redirect("/coach");
   }

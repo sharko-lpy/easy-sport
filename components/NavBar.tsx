@@ -3,7 +3,13 @@
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function NavBar({ fullName }: { fullName?: string | null }) {
+export default function NavBar({
+  fullName,
+  role,
+}: {
+  fullName?: string | null;
+  role?: string | null;
+}) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -19,6 +25,14 @@ export default function NavBar({ fullName }: { fullName?: string | null }) {
         Coaching Sportif
       </a>
       <div className="flex items-center gap-4">
+        {role === "admin" && (
+          <a
+            href="/admin"
+            className="text-sm font-medium text-brand hover:underline"
+          >
+            Admin
+          </a>
+        )}
         {fullName && (
           <span className="text-sm text-slate-600">Bonjour {fullName}</span>
         )}

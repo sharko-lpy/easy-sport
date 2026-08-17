@@ -25,7 +25,7 @@ export default async function CoachHomePage() {
 
   return (
     <>
-      <NavBar fullName={profile?.full_name} />
+      <NavBar fullName={profile?.full_name} role={profile?.role} />
       <main className="mx-auto max-w-3xl px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-slate-900">Mes programmes</h1>

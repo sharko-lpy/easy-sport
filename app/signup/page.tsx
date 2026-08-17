@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { usernameToEmail } from "@/lib/username";
 
 export default function SignupPage() {
+  const router = useRouter();
   const supabase = createClient();
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"athlete" | "coach">("athlete");
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -19,37 +21,26 @@ export default function SignupPage() {
     setError(null);
 
     const { error } = await supabase.auth.signUp({
-      email,
+      email: usernameToEmail(username),
       password,
       options: {
-        data: { full_name: fullName, role },
+        data: { full_name: fullName, username, role },
       },
     });
 
     setLoading(false);
 
     if (error) {
-      setError(error.message);
+      setError(
+        error.message.toLowerCase().includes("already registered")
+          ? "Ce nom d'utilisateur est déjà pris."
+          : error.message
+      );
       return;
     }
 
-    setDone(true);
-  }
-
-  if (done) {
-    return (
-      <main className="flex min-h-screen items-center justify-center px-4 text-center">
-        <div className="max-w-sm space-y-3">
-          <h1 className="text-xl font-semibold text-slate-900">
-            Vérifie tes emails
-          </h1>
-          <p className="text-slate-600">
-            Un lien de confirmation vient de t'être envoyé à {email}. Clique
-            dessus pour activer ton compte.
-          </p>
-        </div>
-      </main>
-    );
+    router.push("/dashboard");
+    router.refresh();
   }
 
   return (
@@ -82,12 +73,17 @@ export default function SignupPage() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-700">Email</label>
+          <label className="text-sm font-medium text-slate-700">
+            Nom d'utilisateur
+          </label>
           <input
-            type="email"
+            type="text"
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            minLength={3}
+            pattern="[A-Za-z0-9_.-]+"
+            title="Lettres, chiffres, points, tirets et underscores uniquement"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
           />
         </div>

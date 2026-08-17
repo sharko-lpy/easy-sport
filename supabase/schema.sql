@@ -12,9 +12,12 @@ create extension if not exists "pgcrypto";
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   full_name text,
-  role text not null default 'athlete' check (role in ('coach', 'athlete')),
+  username text,
+  role text not null default 'athlete' check (role in ('coach', 'athlete', 'admin')),
   created_at timestamptz not null default now()
 );
+
+create unique index if not exists profiles_username_key on public.profiles (username);
 
 alter table public.profiles enable row level security;
 
@@ -36,6 +39,26 @@ create policy "profiles: un utilisateur crée uniquement son profil"
   to authenticated
   with check (auth.uid() = id);
 
+-- L'utilisateur courant est-il admin ? (security definer pour éviter la
+-- récursion des policies RLS quand on l'utilise dans une policy sur profiles)
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from public.profiles where id = auth.uid() and role = 'admin'
+  );
+$$;
+
+drop policy if exists "profiles: un admin gère tous les profils" on public.profiles;
+create policy "profiles: un admin gère tous les profils"
+  on public.profiles for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
 -- Crée automatiquement un profil "athlete" à l'inscription
 create or replace function public.handle_new_user()
 returns trigger
@@ -43,10 +66,11 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  insert into public.profiles (id, full_name, role)
+  insert into public.profiles (id, full_name, username, role)
   values (
     new.id,
     new.raw_user_meta_data ->> 'full_name',
+    new.raw_user_meta_data ->> 'username',
     coalesce(new.raw_user_meta_data ->> 'role', 'athlete')
   )
   on conflict (id) do nothing;
