@@ -18,16 +18,19 @@ create table if not exists public.profiles (
 
 alter table public.profiles enable row level security;
 
+drop policy if exists "profiles: lecture par tous les utilisateurs connectés" on public.profiles;
 create policy "profiles: lecture par tous les utilisateurs connectés"
   on public.profiles for select
   to authenticated
   using (true);
 
+drop policy if exists "profiles: un utilisateur modifie uniquement son profil" on public.profiles;
 create policy "profiles: un utilisateur modifie uniquement son profil"
   on public.profiles for update
   to authenticated
   using (auth.uid() = id);
 
+drop policy if exists "profiles: un utilisateur crée uniquement son profil" on public.profiles;
 create policy "profiles: un utilisateur crée uniquement son profil"
   on public.profiles for insert
   to authenticated
@@ -67,25 +70,6 @@ create table if not exists public.programs (
   created_at timestamptz not null default now()
 );
 
-alter table public.programs enable row level security;
-
-create policy "programs: le coach gère ses propres programmes"
-  on public.programs for all
-  to authenticated
-  using (auth.uid() = coach_id)
-  with check (auth.uid() = coach_id);
-
-create policy "programs: un athlète voit les programmes qui lui sont assignés"
-  on public.programs for select
-  to authenticated
-  using (
-    exists (
-      select 1 from public.program_assignments pa
-      where pa.program_id = programs.id
-        and pa.athlete_id = auth.uid()
-    )
-  );
-
 -- ------------------------------------------------------------
 -- 3. program_assignments : quel athlète suit quel programme
 -- ------------------------------------------------------------
@@ -97,8 +81,32 @@ create table if not exists public.program_assignments (
   unique (program_id, athlete_id)
 );
 
+-- Policies "programs" (définies ici : elles référencent program_assignments,
+-- qui doit donc déjà exister)
+alter table public.programs enable row level security;
+
+drop policy if exists "programs: le coach gère ses propres programmes" on public.programs;
+create policy "programs: le coach gère ses propres programmes"
+  on public.programs for all
+  to authenticated
+  using (auth.uid() = coach_id)
+  with check (auth.uid() = coach_id);
+
+drop policy if exists "programs: un athlète voit les programmes qui lui sont assignés" on public.programs;
+create policy "programs: un athlète voit les programmes qui lui sont assignés"
+  on public.programs for select
+  to authenticated
+  using (
+    exists (
+      select 1 from public.program_assignments pa
+      where pa.program_id = programs.id
+        and pa.athlete_id = auth.uid()
+    )
+  );
+
 alter table public.program_assignments enable row level security;
 
+drop policy if exists "assignments: le coach gère les assignations de ses programmes" on public.program_assignments;
 create policy "assignments: le coach gère les assignations de ses programmes"
   on public.program_assignments for all
   to authenticated
@@ -117,6 +125,7 @@ create policy "assignments: le coach gère les assignations de ses programmes"
     )
   );
 
+drop policy if exists "assignments: un athlète voit ses propres assignations" on public.program_assignments;
 create policy "assignments: un athlète voit ses propres assignations"
   on public.program_assignments for select
   to authenticated
@@ -138,6 +147,7 @@ create table if not exists public.program_exercises (
 
 alter table public.program_exercises enable row level security;
 
+drop policy if exists "exercises: le coach gère les exercices de ses programmes" on public.program_exercises;
 create policy "exercises: le coach gère les exercices de ses programmes"
   on public.program_exercises for all
   to authenticated
@@ -156,6 +166,7 @@ create policy "exercises: le coach gère les exercices de ses programmes"
     )
   );
 
+drop policy if exists "exercises: un athlète voit les exercices de ses programmes" on public.program_exercises;
 create policy "exercises: un athlète voit les exercices de ses programmes"
   on public.program_exercises for select
   to authenticated
@@ -184,12 +195,14 @@ create table if not exists public.workout_logs (
 
 alter table public.workout_logs enable row level security;
 
+drop policy if exists "logs: un athlète gère ses propres logs" on public.workout_logs;
 create policy "logs: un athlète gère ses propres logs"
   on public.workout_logs for all
   to authenticated
   using (auth.uid() = athlete_id)
   with check (auth.uid() = athlete_id);
 
+drop policy if exists "logs: le coach voit les logs de ses programmes" on public.workout_logs;
 create policy "logs: le coach voit les logs de ses programmes"
   on public.workout_logs for select
   to authenticated
