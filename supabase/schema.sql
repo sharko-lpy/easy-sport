@@ -14,6 +14,7 @@ create table if not exists public.profiles (
   full_name text,
   username text,
   role text not null default 'athlete' check (role in ('coach', 'athlete', 'admin')),
+  motivational_quote text,
   created_at timestamptz not null default now()
 );
 
@@ -92,6 +93,7 @@ create table if not exists public.programs (
   title text not null,
   description text,
   is_default boolean not null default false,
+  category text check (category is null or category in ('bras-epaules', 'abdos-torse', 'jambes', 'cardio')),
   created_at timestamptz not null default now()
 );
 
@@ -130,6 +132,13 @@ create policy "programs: un athlète voit les programmes qui lui sont assignés"
     )
   );
 
+drop policy if exists "programs: un admin gère tous les programmes" on public.programs;
+create policy "programs: un admin gère tous les programmes"
+  on public.programs for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
 alter table public.program_assignments enable row level security;
 
 drop policy if exists "assignments: le coach gère les assignations de ses programmes" on public.program_assignments;
@@ -156,6 +165,13 @@ create policy "assignments: un athlète voit ses propres assignations"
   on public.program_assignments for select
   to authenticated
   using (auth.uid() = athlete_id);
+
+drop policy if exists "assignments: un admin gère toutes les assignations" on public.program_assignments;
+create policy "assignments: un admin gère toutes les assignations"
+  on public.program_assignments for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
 
 -- ------------------------------------------------------------
 -- 4. program_exercises : les exercices qui composent un programme
@@ -208,6 +224,13 @@ create policy "exercises: un athlète voit les exercices de ses programmes"
         and pa.athlete_id = auth.uid()
     )
   );
+
+drop policy if exists "exercises: un admin gère tous les exercices" on public.program_exercises;
+create policy "exercises: un admin gère tous les exercices"
+  on public.program_exercises for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
 
 -- ------------------------------------------------------------
 -- 5. workout_logs : le suivi rempli par l'athlète après chaque séance

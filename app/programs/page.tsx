@@ -14,9 +14,28 @@ export default async function ProgramsPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name")
+    .select("full_name, motivational_quote")
     .eq("id", user.id)
     .single();
+
+  const { data: assignments } = await supabase
+    .from("program_assignments")
+    .select("program_id")
+    .eq("athlete_id", user.id);
+
+  const programIds = (assignments ?? []).map((a) => a.program_id);
+
+  const { data: categoryPrograms } = programIds.length
+    ? await supabase
+        .from("programs")
+        .select("id, category")
+        .in("id", programIds)
+        .not("category", "is", null)
+    : { data: [] as { id: string; category: string | null }[] };
+
+  const programIdByCategory = new Map(
+    (categoryPrograms ?? []).map((p) => [p.category, p.id])
+  );
 
   return (
     <main
@@ -39,20 +58,35 @@ export default async function ProgramsPage() {
         <p className="mt-3 text-white/70">Choisis ton programme du jour</p>
       </div>
 
+      {profile?.motivational_quote && (
+        <div className="mx-auto mt-8 max-w-2xl rounded-2xl border border-white/15 bg-white/5 px-6 py-5 text-center backdrop-blur-md">
+          <p className="text-lg italic text-white/90">
+            « {profile.motivational_quote} »
+          </p>
+        </div>
+      )}
+
       <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
-        {CATEGORIES.map((cat) => (
-          <a
-            key={cat.slug}
-            href={`/programs/categorie/${cat.slug}`}
-            className="flex flex-col items-center rounded-3xl border border-white/15 bg-white/10 px-4 py-6 text-center backdrop-blur-md transition hover:border-pink-300/60 hover:bg-white/15"
-          >
-            <BodyDiagram zone={cat.zone} className="h-40 w-auto sm:h-48" />
-            <h3 className="mt-2 text-sm font-semibold text-white sm:text-base">
-              {cat.label}
-            </h3>
-            <p className="mt-1 text-xs text-white/60">{cat.subtitle}</p>
-          </a>
-        ))}
+        {CATEGORIES.map((cat) => {
+          const programId = programIdByCategory.get(cat.slug);
+          const href = programId
+            ? `/programs/${programId}`
+            : `/programs/categorie/${cat.slug}`;
+
+          return (
+            <a
+              key={cat.slug}
+              href={href}
+              className="flex flex-col items-center rounded-3xl border border-white/15 bg-white/10 px-4 py-6 text-center backdrop-blur-md transition hover:border-pink-300/60 hover:bg-white/15"
+            >
+              <BodyDiagram zone={cat.zone} className="h-40 w-auto sm:h-48" />
+              <h3 className="mt-2 text-sm font-semibold text-white sm:text-base">
+                {cat.label}
+              </h3>
+              <p className="mt-1 text-xs text-white/60">{cat.subtitle}</p>
+            </a>
+          );
+        })}
       </div>
 
       <div className="mx-auto mt-12 max-w-4xl text-center">

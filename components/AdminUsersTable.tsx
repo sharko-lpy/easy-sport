@@ -94,13 +94,23 @@ export default function AdminUsersTable({
                 {new Date(u.created_at).toLocaleDateString("fr-FR")}
               </td>
               <td className="px-4 py-2 text-right">
-                <button
-                  onClick={() => deleteUser(u.id)}
-                  disabled={u.id === currentUserId}
-                  className="text-sm text-red-600 hover:underline disabled:opacity-50"
-                >
-                  Supprimer
-                </button>
+                <div className="flex items-center justify-end gap-3">
+                  {u.role === "athlete" && (
+                    <a
+                      href={`/admin/athletes/${u.id}`}
+                      className="text-sm text-brand hover:underline"
+                    >
+                      Gérer
+                    </a>
+                  )}
+                  <button
+                    onClick={() => deleteUser(u.id)}
+                    disabled={u.id === currentUserId}
+                    className="text-sm text-red-600 hover:underline disabled:opacity-50"
+                  >
+                    Supprimer
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
