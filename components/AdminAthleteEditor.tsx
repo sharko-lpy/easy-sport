@@ -105,7 +105,7 @@ export default function AdminAthleteEditor({
 
     if (!programId) {
       const category = CATEGORIES.find((c) => c.slug === categorySlug)!;
-      const { data: newProgram } = await supabase
+      const { data: newProgram, error: programError } = await supabase
         .from("programs")
         .insert({
           coach_id: adminId,
@@ -115,22 +115,40 @@ export default function AdminAthleteEditor({
         .select("id")
         .single();
 
-      if (!newProgram) return;
+      if (programError || !newProgram) {
+        alert(
+          "Impossible de créer le programme : " +
+            (programError?.message ?? "erreur inconnue")
+        );
+        return;
+      }
       programId = newProgram.id;
 
-      await supabase
+      const { error: assignError } = await supabase
         .from("program_assignments")
         .insert({ program_id: programId, athlete_id: athlete.id });
+
+      if (assignError) {
+        alert("Impossible d'assigner le programme : " + assignError.message);
+        return;
+      }
     }
 
-    await supabase.from("program_exercises").insert({
-      program_id: programId,
-      name: exercise.name,
-      sets: exercise.sets === "" ? null : exercise.sets,
-      reps: exercise.reps === "" ? null : exercise.reps,
-      notes: exercise.notes || null,
-      order_index: byCategory[categorySlug]?.exercises.length ?? 0,
-    });
+    const { error: exerciseError } = await supabase
+      .from("program_exercises")
+      .insert({
+        program_id: programId,
+        name: exercise.name,
+        sets: exercise.sets === "" ? null : exercise.sets,
+        reps: exercise.reps === "" ? null : exercise.reps,
+        notes: exercise.notes || null,
+        order_index: byCategory[categorySlug]?.exercises.length ?? 0,
+      });
+
+    if (exerciseError) {
+      alert("Impossible d'ajouter l'exercice : " + exerciseError.message);
+      return;
+    }
 
     loadPrograms();
   }
