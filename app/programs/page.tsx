@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import NavBar from "@/components/NavBar";
+import BodyDiagram from "@/components/BodyDiagram";
+import LogoutButton from "@/components/LogoutButton";
+import { CATEGORIES } from "@/lib/categories";
 
 export default async function ProgramsPage() {
   const supabase = createClient();
@@ -16,85 +18,51 @@ export default async function ProgramsPage() {
     .eq("id", user.id)
     .single();
 
-  const { data: assignments } = await supabase
-    .from("program_assignments")
-    .select("program_id")
-    .eq("athlete_id", user.id);
-
-  const programIds = (assignments ?? []).map((a) => a.program_id);
-
-  const { data: programsData } = programIds.length
-    ? await supabase
-        .from("programs")
-        .select("id, title, description")
-        .in("id", programIds)
-    : { data: [] as { id: string; title: string; description: string | null }[] };
-
-  const programs = programsData ?? [];
-
-  const { data: defaultProgram } = await supabase
-    .from("programs")
-    .select("id, title, description")
-    .eq("is_default", true)
-    .maybeSingle();
-
   return (
-    <>
-      <NavBar fullName={profile?.full_name} />
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        {defaultProgram && (
-          <section className="mb-10">
-            <h1 className="mb-3 text-2xl font-bold text-slate-900">
-              Programme perso
-            </h1>
-            <a
-              href={`/programs/${defaultProgram.id}`}
-              className="block rounded-lg border border-brand bg-brand/5 p-4 hover:border-brand"
-            >
-              <p className="font-medium text-slate-900">
-                {defaultProgram.title}
-              </p>
-              {defaultProgram.description && (
-                <p className="mt-1 text-sm text-slate-600">
-                  {defaultProgram.description}
-                </p>
-              )}
-            </a>
-          </section>
-        )}
+    <main
+      className="min-h-screen px-4 py-10"
+      style={{
+        background:
+          "radial-gradient(circle at 75% 15%, rgba(236,72,153,0.55), transparent 45%), " +
+          "radial-gradient(circle at 20% 85%, rgba(147,51,234,0.45), transparent 50%), " +
+          "linear-gradient(160deg, #1a0b2e 0%, #2b0845 45%, #4a0d5c 100%)",
+      }}
+    >
+      <div className="mx-auto flex max-w-4xl justify-end">
+        <LogoutButton />
+      </div>
 
-        <section>
-          <h2 className="mb-3 text-lg font-semibold text-slate-900">
-            Mes programmes (coach)
-          </h2>
+      <div className="mx-auto mt-4 max-w-4xl text-center">
+        <h1 className="text-4xl font-extrabold text-white sm:text-5xl">
+          Bienvenue {profile?.full_name ?? ""} !
+        </h1>
+        <p className="mt-3 text-white/70">Choisis ton programme du jour</p>
+      </div>
 
-          {programs.length === 0 ? (
-            <p className="text-slate-600">
-              Aucun programme ne t'a encore été assigné par ton coach.
-            </p>
-          ) : (
-            <ul className="space-y-3">
-              {programs.map((program) => (
-                <li key={program.id}>
-                  <a
-                    href={`/programs/${program.id}`}
-                    className="block rounded-lg border border-slate-200 p-4 hover:border-brand"
-                  >
-                    <p className="font-medium text-slate-900">
-                      {program.title}
-                    </p>
-                    {program.description && (
-                      <p className="mt-1 text-sm text-slate-600">
-                        {program.description}
-                      </p>
-                    )}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </main>
-    </>
+      <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
+        {CATEGORIES.map((cat) => (
+          <a
+            key={cat.slug}
+            href={`/programs/categorie/${cat.slug}`}
+            className="flex flex-col items-center rounded-3xl border border-white/15 bg-white/10 px-4 py-6 text-center backdrop-blur-md transition hover:border-pink-300/60 hover:bg-white/15"
+          >
+            <BodyDiagram zone={cat.zone} className="h-40 w-auto sm:h-48" />
+            <h3 className="mt-2 text-sm font-semibold text-white sm:text-base">
+              {cat.label}
+            </h3>
+            <p className="mt-1 text-xs text-white/60">{cat.subtitle}</p>
+          </a>
+        ))}
+      </div>
+
+      <div className="mx-auto mt-12 max-w-4xl text-center">
+        <a
+          href="/programs/liste"
+          className="text-sm text-white/60 underline decoration-white/30 underline-offset-4 hover:text-white/90"
+        >
+          Voir mes programmes assignés par mon coach
+        </a>
+      </div>
+    </main>
   );
 }

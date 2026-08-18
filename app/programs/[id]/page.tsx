@@ -99,7 +99,7 @@ export default function AthleteProgramPage({
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
-      <a href="/programs" className="text-sm text-brand">
+      <a href="/programs/liste" className="text-sm text-brand">
         ← Mes programmes
       </a>
       <h1 className="mb-6 mt-2 text-2xl font-bold text-slate-900">{title}</h1>
