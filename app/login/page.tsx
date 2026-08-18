@@ -35,42 +35,38 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
+    <main className="app-bg flex min-h-screen items-center justify-center px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm space-y-4 rounded-lg border border-slate-200 p-6 shadow-sm"
+        className="glass-card w-full max-w-sm space-y-4 p-6"
       >
-        <h1 className="text-xl font-semibold text-slate-900">Connexion</h1>
+        <h1 className="text-xl font-semibold text-white">Connexion</h1>
 
         {error && (
-          <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p className="rounded-md border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
             {error}
           </p>
         )}
 
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-700">
-            Nom d'utilisateur
-          </label>
+          <label className="glass-label">Nom d'utilisateur</label>
           <input
             type="text"
             required
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="glass-input"
           />
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-700">
-            Mot de passe
-          </label>
+          <label className="glass-label">Mot de passe</label>
           <input
             type="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="glass-input"
           />
         </div>
 
@@ -82,9 +78,9 @@ export default function LoginPage() {
           {loading ? "Connexion..." : "Se connecter"}
         </button>
 
-        <p className="text-center text-sm text-slate-600">
+        <p className="text-center text-sm text-white/60">
           Pas encore de compte ?{" "}
-          <a href="/signup" className="font-medium text-brand">
+          <a href="/signup" className="font-medium text-pink-300">
             Créer un compte
           </a>
         </p>

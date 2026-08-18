@@ -11,15 +11,7 @@ export default function CategoryPage({
   if (!category) notFound();
 
   return (
-    <main
-      className="flex min-h-screen flex-col items-center justify-center px-4 py-10 text-center"
-      style={{
-        background:
-          "radial-gradient(circle at 75% 15%, rgba(236,72,153,0.55), transparent 45%), " +
-          "radial-gradient(circle at 20% 85%, rgba(147,51,234,0.45), transparent 50%), " +
-          "linear-gradient(160deg, #1a0b2e 0%, #2b0845 45%, #4a0d5c 100%)",
-      }}
-    >
+    <main className="app-bg flex min-h-screen flex-col items-center justify-center px-4 py-10 text-center">
       <BodyDiagram zone={category.zone} className="h-56 w-auto" />
       <h1 className="mt-6 text-3xl font-extrabold text-white">
         {category.label}

@@ -26,42 +26,42 @@ export default async function CoachHomePage() {
   return (
     <>
       <NavBar fullName={profile?.full_name} role={profile?.role} />
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-900">Mes programmes</h1>
-          <a
-            href="/coach/programs/new"
-            className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark"
-          >
-            + Nouveau programme
-          </a>
-        </div>
+      <main className="app-bg min-h-screen px-4 py-8">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-6 flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-white">Mes programmes</h1>
+            <a
+              href="/coach/programs/new"
+              className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark"
+            >
+              + Nouveau programme
+            </a>
+          </div>
 
-        {!programs || programs.length === 0 ? (
-          <p className="text-slate-600">
-            Tu n'as pas encore créé de programme.
-          </p>
-        ) : (
-          <ul className="space-y-3">
-            {programs.map((program) => (
-              <li key={program.id}>
-                <a
-                  href={`/coach/programs/${program.id}`}
-                  className="block rounded-lg border border-slate-200 p-4 hover:border-brand"
-                >
-                  <p className="font-medium text-slate-900">
-                    {program.title}
-                  </p>
-                  {program.description && (
-                    <p className="mt-1 text-sm text-slate-600">
-                      {program.description}
-                    </p>
-                  )}
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
+          {!programs || programs.length === 0 ? (
+            <p className="text-white/70">
+              Tu n'as pas encore créé de programme.
+            </p>
+          ) : (
+            <ul className="space-y-3">
+              {programs.map((program) => (
+                <li key={program.id}>
+                  <a
+                    href={`/coach/programs/${program.id}`}
+                    className="glass-card block p-4 hover:border-pink-300/60"
+                  >
+                    <p className="font-medium text-white">{program.title}</p>
+                    {program.description && (
+                      <p className="mt-1 text-sm text-white/60">
+                        {program.description}
+                      </p>
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </main>
     </>
   );

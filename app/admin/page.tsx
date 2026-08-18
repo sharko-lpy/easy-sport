@@ -22,11 +22,13 @@ export default async function AdminPage() {
   return (
     <>
       <NavBar fullName={profile?.full_name} role={profile?.role} />
-      <main className="mx-auto max-w-4xl px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-slate-900">
-          Gestion des utilisateurs
-        </h1>
-        <AdminUsersTable currentUserId={user.id} />
+      <main className="app-bg min-h-screen px-4 py-8">
+        <div className="mx-auto max-w-4xl">
+          <h1 className="mb-6 text-2xl font-bold text-white">
+            Gestion des utilisateurs
+          </h1>
+          <AdminUsersTable currentUserId={user.id} />
+        </div>
       </main>
     </>
   );

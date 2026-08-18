@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import RestTimer from "@/components/RestTimer";
 
 type Exercise = {
   id: string;
@@ -94,109 +95,125 @@ export default function AthleteProgramPage({
   }
 
   if (loading) {
-    return <main className="mx-auto max-w-3xl px-4 py-8">Chargement...</main>;
+    return (
+      <main className="app-bg min-h-screen px-4 py-8 text-white">
+        Chargement...
+      </main>
+    );
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <a href="/programs/liste" className="text-sm text-brand">
-        ← Mes programmes
-      </a>
-      <h1 className="mb-6 mt-2 text-2xl font-bold text-slate-900">{title}</h1>
+    <main className="app-bg min-h-screen px-4 py-8">
+      <div className="mx-auto max-w-3xl">
+        <a href="/programs/liste" className="text-sm text-pink-300">
+          ← Mes programmes
+        </a>
+        <h1 className="mb-6 mt-2 text-2xl font-bold text-white">{title}</h1>
 
-      <ul className="space-y-3">
-        {exercises.map((ex) => {
-          const isOpen = openExerciseId === ex.id;
-          const lastLog = logs.find((l) => l.program_exercise_id === ex.id);
+        <ul className="space-y-3">
+          {exercises.map((ex) => {
+            const isOpen = openExerciseId === ex.id;
+            const lastLog = logs.find((l) => l.program_exercise_id === ex.id);
 
-          return (
-            <li
-              key={ex.id}
-              className="rounded-lg border border-slate-200 p-4"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-slate-900">{ex.name}</p>
-                  {ex.sets && ex.reps && (
-                    <p className="text-sm text-slate-600">
-                      Objectif : {ex.sets} x {ex.reps}
-                    </p>
-                  )}
-                  {lastLog && (
-                    <p className="text-xs text-slate-500">
-                      Dernier passage : {lastLog.sets_completed ?? "-"} x{" "}
-                      {lastLog.reps_completed ?? "-"}
-                      {lastLog.weight_kg ? ` @ ${lastLog.weight_kg}kg` : ""}
-                    </p>
-                  )}
-                </div>
-                <button
-                  onClick={() => setOpenExerciseId(isOpen ? null : ex.id)}
-                  className="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark"
-                >
-                  {isOpen ? "Annuler" : "Enregistrer"}
-                </button>
-              </div>
-
-              {isOpen && (
-                <div className="mt-3 flex flex-wrap items-end gap-2 border-t border-slate-100 pt-3">
+            return (
+              <li key={ex.id} className="glass-card p-4">
+                <div className="flex items-center justify-between">
                   <div>
-                    <label className="block text-xs text-slate-600">
-                      Séries
-                    </label>
-                    <input
-                      type="number"
-                      value={setsCompleted}
-                      onChange={(e) =>
-                        setSetsCompleted(
-                          e.target.value === "" ? "" : Number(e.target.value)
-                        )
-                      }
-                      className="w-20 rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-slate-600">
-                      Répétitions
-                    </label>
-                    <input
-                      type="number"
-                      value={repsCompleted}
-                      onChange={(e) =>
-                        setRepsCompleted(
-                          e.target.value === "" ? "" : Number(e.target.value)
-                        )
-                      }
-                      className="w-24 rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-slate-600">
-                      Poids (kg)
-                    </label>
-                    <input
-                      type="number"
-                      value={weightKg}
-                      onChange={(e) =>
-                        setWeightKg(
-                          e.target.value === "" ? "" : Number(e.target.value)
-                        )
-                      }
-                      className="w-24 rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    />
+                    <p className="font-medium text-white">{ex.name}</p>
+                    {ex.sets && ex.reps && (
+                      <p className="text-sm text-white/60">
+                        Objectif : {ex.sets} x {ex.reps}
+                      </p>
+                    )}
+                    {ex.notes && (
+                      <p className="text-xs text-white/50">{ex.notes}</p>
+                    )}
+                    {lastLog && (
+                      <p className="text-xs text-white/40">
+                        Dernier passage : {lastLog.sets_completed ?? "-"} x{" "}
+                        {lastLog.reps_completed ?? "-"}
+                        {lastLog.weight_kg ? ` @ ${lastLog.weight_kg}kg` : ""}
+                      </p>
+                    )}
                   </div>
                   <button
-                    onClick={() => logWorkout(ex.id)}
-                    className="rounded-md border border-brand px-3 py-1.5 text-sm font-medium text-brand hover:bg-brand hover:text-white"
+                    onClick={() => setOpenExerciseId(isOpen ? null : ex.id)}
+                    className="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark"
                   >
-                    Valider
+                    {isOpen ? "Annuler" : "Enregistrer"}
                   </button>
                 </div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+
+                {isOpen && (
+                  <div className="mt-3 space-y-3 border-t border-white/10 pt-3">
+                    <div className="flex flex-wrap items-end gap-2">
+                      <div>
+                        <label className="block text-xs text-white/60">
+                          Séries
+                        </label>
+                        <input
+                          type="number"
+                          value={setsCompleted}
+                          onChange={(e) =>
+                            setSetsCompleted(
+                              e.target.value === ""
+                                ? ""
+                                : Number(e.target.value)
+                            )
+                          }
+                          className="glass-input w-20 py-1"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-white/60">
+                          Répétitions
+                        </label>
+                        <input
+                          type="number"
+                          value={repsCompleted}
+                          onChange={(e) =>
+                            setRepsCompleted(
+                              e.target.value === ""
+                                ? ""
+                                : Number(e.target.value)
+                            )
+                          }
+                          className="glass-input w-24 py-1"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-white/60">
+                          Poids (kg)
+                        </label>
+                        <input
+                          type="number"
+                          value={weightKg}
+                          onChange={(e) =>
+                            setWeightKg(
+                              e.target.value === ""
+                                ? ""
+                                : Number(e.target.value)
+                            )
+                          }
+                          className="glass-input w-24 py-1"
+                        />
+                      </div>
+                      <button
+                        onClick={() => logWorkout(ex.id)}
+                        className="rounded-md border border-pink-300/60 px-3 py-1.5 text-sm font-medium text-pink-300 hover:bg-brand hover:text-white"
+                      >
+                        Valider
+                      </button>
+                    </div>
+
+                    <RestTimer key={ex.id} />
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </main>
   );
 }

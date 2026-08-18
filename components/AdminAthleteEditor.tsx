@@ -161,10 +161,10 @@ export default function AdminAthleteEditor({
   return (
     <div className="space-y-10">
       <section>
-        <h2 className="mb-2 text-lg font-semibold text-slate-900">
+        <h2 className="mb-2 text-lg font-semibold text-white">
           Citation de motivation
         </h2>
-        <p className="mb-3 text-sm text-slate-600">
+        <p className="mb-3 text-sm text-white/60">
           Affichée façon citation sur la page d'accueil de l'athlète.
         </p>
         <textarea
@@ -172,7 +172,7 @@ export default function AdminAthleteEditor({
           onChange={(e) => setQuote(e.target.value)}
           rows={3}
           placeholder="Ex : Chaque séance te rapproche de ton objectif."
-          className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="glass-input"
         />
         <button
           onClick={saveQuote}
@@ -182,17 +182,17 @@ export default function AdminAthleteEditor({
           {quoteSaving ? "Enregistrement..." : "Enregistrer"}
         </button>
         {quoteSaved && (
-          <span className="ml-3 text-sm text-brand">Enregistré ✓</span>
+          <span className="ml-3 text-sm text-pink-300">Enregistré ✓</span>
         )}
       </section>
 
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">
+        <h2 className="mb-4 text-lg font-semibold text-white">
           Blocs d'entraînement
         </h2>
 
         {loading ? (
-          <p className="text-slate-600">Chargement...</p>
+          <p className="text-white/70">Chargement...</p>
         ) : (
           <div className="space-y-6">
             {CATEGORIES.map((cat) => (
@@ -243,24 +243,24 @@ function CategoryBlock({
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 p-4">
-      <h3 className="mb-3 font-medium text-slate-900">{label}</h3>
+    <div className="glass-card p-4">
+      <h3 className="mb-3 font-medium text-white">{label}</h3>
 
       {data && data.exercises.length > 0 ? (
         <ul className="mb-4 space-y-2">
           {data.exercises.map((ex) => (
             <li
               key={ex.id}
-              className="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2"
+              className="flex items-center justify-between rounded-md border border-white/10 bg-white/5 px-3 py-2"
             >
-              <span className="text-sm text-slate-800">
+              <span className="text-sm text-white/90">
                 {ex.name}
                 {ex.sets && ex.reps ? ` — ${ex.sets} x ${ex.reps}` : ""}
                 {ex.notes ? ` (${ex.notes})` : ""}
               </span>
               <button
                 onClick={() => onRemove(ex.id)}
-                className="text-sm text-red-600 hover:underline"
+                className="text-sm text-red-300 hover:underline"
               >
                 Retirer
               </button>
@@ -268,7 +268,7 @@ function CategoryBlock({
           ))}
         </ul>
       ) : (
-        <p className="mb-4 text-sm text-slate-500">
+        <p className="mb-4 text-sm text-white/50">
           Aucun exercice pour l'instant.
         </p>
       )}
@@ -279,7 +279,7 @@ function CategoryBlock({
           placeholder="Nom de l'exercice"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="flex-1 min-w-[140px] rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="glass-input flex-1 min-w-[140px]"
           required
         />
         <input
@@ -289,7 +289,7 @@ function CategoryBlock({
           onChange={(e) =>
             setSets(e.target.value === "" ? "" : Number(e.target.value))
           }
-          className="w-20 rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="glass-input w-20"
         />
         <input
           type="number"
@@ -298,14 +298,14 @@ function CategoryBlock({
           onChange={(e) =>
             setReps(e.target.value === "" ? "" : Number(e.target.value))
           }
-          className="w-24 rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="glass-input w-24"
         />
         <input
           type="text"
           placeholder="Notes (optionnel)"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          className="flex-1 min-w-[140px] rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="glass-input flex-1 min-w-[140px]"
         />
         <button
           type="submit"

@@ -274,3 +274,9 @@ create policy "logs: le coach voit les logs de ses programmes"
         and p.coach_id = auth.uid()
     )
   );
+
+drop policy if exists "logs: un admin voit tous les logs" on public.workout_logs;
+create policy "logs: un admin voit tous les logs"
+  on public.workout_logs for select
+  to authenticated
+  using (public.is_admin());

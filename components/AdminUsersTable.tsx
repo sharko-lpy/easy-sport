@@ -54,13 +54,13 @@ export default function AdminUsersTable({
   }
 
   if (loading) {
-    return <p className="text-slate-600">Chargement...</p>;
+    return <p className="text-white/70">Chargement...</p>;
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200">
+    <div className="glass-card overflow-x-auto">
       <table className="w-full text-left text-sm">
-        <thead className="bg-slate-50 text-slate-600">
+        <thead className="bg-white/5 text-white/60">
           <tr>
             <th className="px-4 py-2 font-medium">Nom d'utilisateur</th>
             <th className="px-4 py-2 font-medium">Nom complet</th>
@@ -71,11 +71,9 @@ export default function AdminUsersTable({
         </thead>
         <tbody>
           {users.map((u) => (
-            <tr key={u.id} className="border-t border-slate-200">
-              <td className="px-4 py-2 text-slate-900">
-                {u.username ?? "—"}
-              </td>
-              <td className="px-4 py-2 text-slate-700">
+            <tr key={u.id} className="border-t border-white/10">
+              <td className="px-4 py-2 text-white">{u.username ?? "—"}</td>
+              <td className="px-4 py-2 text-white/80">
                 {u.full_name ?? "—"}
               </td>
               <td className="px-4 py-2">
@@ -83,14 +81,20 @@ export default function AdminUsersTable({
                   value={u.role}
                   onChange={(e) => changeRole(u.id, e.target.value as Role)}
                   disabled={u.id === currentUserId}
-                  className="rounded-md border border-slate-300 px-2 py-1 text-sm disabled:opacity-50"
+                  className="rounded-md border border-white/20 bg-white/10 px-2 py-1 text-sm text-white disabled:opacity-50"
                 >
-                  <option value="athlete">Athlète</option>
-                  <option value="coach">Coach</option>
-                  <option value="admin">Admin</option>
+                  <option className="text-slate-900" value="athlete">
+                    Athlète
+                  </option>
+                  <option className="text-slate-900" value="coach">
+                    Coach
+                  </option>
+                  <option className="text-slate-900" value="admin">
+                    Admin
+                  </option>
                 </select>
               </td>
-              <td className="px-4 py-2 text-slate-500">
+              <td className="px-4 py-2 text-white/50">
                 {new Date(u.created_at).toLocaleDateString("fr-FR")}
               </td>
               <td className="px-4 py-2 text-right">
@@ -98,7 +102,7 @@ export default function AdminUsersTable({
                   {u.role === "athlete" && (
                     <a
                       href={`/admin/athletes/${u.id}`}
-                      className="text-sm text-brand hover:underline"
+                      className="text-sm text-pink-300 hover:underline"
                     >
                       Gérer
                     </a>
@@ -106,7 +110,7 @@ export default function AdminUsersTable({
                   <button
                     onClick={() => deleteUser(u.id)}
                     disabled={u.id === currentUserId}
-                    className="text-sm text-red-600 hover:underline disabled:opacity-50"
+                    className="text-sm text-red-300 hover:underline disabled:opacity-50"
                   >
                     Supprimer
                   </button>

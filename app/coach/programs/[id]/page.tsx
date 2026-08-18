@@ -100,112 +100,116 @@ export default function ProgramDetailPage({
   }
 
   if (loading) {
-    return <main className="mx-auto max-w-3xl px-4 py-8">Chargement...</main>;
+    return (
+      <main className="app-bg min-h-screen px-4 py-8 text-white">
+        Chargement...
+      </main>
+    );
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <a href="/coach" className="text-sm text-brand">
-        ← Mes programmes
-      </a>
-      <h1 className="mb-6 mt-2 text-2xl font-bold text-slate-900">{title}</h1>
+    <main className="app-bg min-h-screen px-4 py-8">
+      <div className="mx-auto max-w-3xl">
+        <a href="/coach" className="text-sm text-pink-300">
+          ← Mes programmes
+        </a>
+        <h1 className="mb-6 mt-2 text-2xl font-bold text-white">{title}</h1>
 
-      <section className="mb-10">
-        <h2 className="mb-3 text-lg font-semibold text-slate-900">
-          Exercices
-        </h2>
+        <section className="mb-10">
+          <h2 className="mb-3 text-lg font-semibold text-white">Exercices</h2>
 
-        <ul className="mb-4 space-y-2">
-          {exercises.map((ex) => (
-            <li
-              key={ex.id}
-              className="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2"
-            >
-              <span className="text-sm text-slate-800">
-                {ex.name}
-                {ex.sets && ex.reps ? ` — ${ex.sets} x ${ex.reps}` : ""}
-              </span>
-              <button
-                onClick={() => removeExercise(ex.id)}
-                className="text-sm text-red-600 hover:underline"
+          <ul className="mb-4 space-y-2">
+            {exercises.map((ex) => (
+              <li
+                key={ex.id}
+                className="glass-card flex items-center justify-between px-3 py-2"
               >
-                Retirer
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        <form onSubmit={addExercise} className="flex flex-wrap gap-2">
-          <input
-            type="text"
-            placeholder="Nom de l'exercice"
-            value={exerciseName}
-            onChange={(e) => setExerciseName(e.target.value)}
-            className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
-            required
-          />
-          <input
-            type="number"
-            placeholder="Séries"
-            value={sets}
-            onChange={(e) =>
-              setSets(e.target.value === "" ? "" : Number(e.target.value))
-            }
-            className="w-24 rounded-md border border-slate-300 px-3 py-2 text-sm"
-          />
-          <input
-            type="number"
-            placeholder="Répétitions"
-            value={reps}
-            onChange={(e) =>
-              setReps(e.target.value === "" ? "" : Number(e.target.value))
-            }
-            className="w-28 rounded-md border border-slate-300 px-3 py-2 text-sm"
-          />
-          <button
-            type="submit"
-            className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark"
-          >
-            Ajouter
-          </button>
-        </form>
-      </section>
-
-      <section>
-        <h2 className="mb-3 text-lg font-semibold text-slate-900">
-          Athlètes assignés
-        </h2>
-
-        {allAthletes.length === 0 ? (
-          <p className="text-sm text-slate-600">
-            Aucun athlète n'a encore créé de compte.
-          </p>
-        ) : (
-          <ul className="space-y-2">
-            {allAthletes.map((athlete) => {
-              const assigned = assignedIds.has(athlete.id);
-              return (
-                <li
-                  key={athlete.id}
-                  className="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2"
+                <span className="text-sm text-white/90">
+                  {ex.name}
+                  {ex.sets && ex.reps ? ` — ${ex.sets} x ${ex.reps}` : ""}
+                </span>
+                <button
+                  onClick={() => removeExercise(ex.id)}
+                  className="text-sm text-red-300 hover:underline"
                 >
-                  <span className="text-sm text-slate-800">
-                    {athlete.full_name ?? "Sans nom"}
-                  </span>
-                  <button
-                    onClick={() => toggleAssignment(athlete.id, assigned)}
-                    className={`text-sm font-medium ${
-                      assigned ? "text-red-600" : "text-brand"
-                    }`}
-                  >
-                    {assigned ? "Retirer" : "Assigner"}
-                  </button>
-                </li>
-              );
-            })}
+                  Retirer
+                </button>
+              </li>
+            ))}
           </ul>
-        )}
-      </section>
+
+          <form onSubmit={addExercise} className="flex flex-wrap gap-2">
+            <input
+              type="text"
+              placeholder="Nom de l'exercice"
+              value={exerciseName}
+              onChange={(e) => setExerciseName(e.target.value)}
+              className="glass-input flex-1"
+              required
+            />
+            <input
+              type="number"
+              placeholder="Séries"
+              value={sets}
+              onChange={(e) =>
+                setSets(e.target.value === "" ? "" : Number(e.target.value))
+              }
+              className="glass-input w-24"
+            />
+            <input
+              type="number"
+              placeholder="Répétitions"
+              value={reps}
+              onChange={(e) =>
+                setReps(e.target.value === "" ? "" : Number(e.target.value))
+              }
+              className="glass-input w-28"
+            />
+            <button
+              type="submit"
+              className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark"
+            >
+              Ajouter
+            </button>
+          </form>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-lg font-semibold text-white">
+            Athlètes assignés
+          </h2>
+
+          {allAthletes.length === 0 ? (
+            <p className="text-sm text-white/60">
+              Aucun athlète n'a encore créé de compte.
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {allAthletes.map((athlete) => {
+                const assigned = assignedIds.has(athlete.id);
+                return (
+                  <li
+                    key={athlete.id}
+                    className="glass-card flex items-center justify-between px-3 py-2"
+                  >
+                    <span className="text-sm text-white/90">
+                      {athlete.full_name ?? "Sans nom"}
+                    </span>
+                    <button
+                      onClick={() => toggleAssignment(athlete.id, assigned)}
+                      className={`text-sm font-medium ${
+                        assigned ? "text-red-300" : "text-pink-300"
+                      }`}
+                    >
+                      {assigned ? "Retirer" : "Assigner"}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+      </div>
     </main>
   );
 }

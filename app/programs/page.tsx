@@ -38,16 +38,14 @@ export default async function ProgramsPage() {
   );
 
   return (
-    <main
-      className="min-h-screen px-4 py-10"
-      style={{
-        background:
-          "radial-gradient(circle at 75% 15%, rgba(236,72,153,0.55), transparent 45%), " +
-          "radial-gradient(circle at 20% 85%, rgba(147,51,234,0.45), transparent 50%), " +
-          "linear-gradient(160deg, #1a0b2e 0%, #2b0845 45%, #4a0d5c 100%)",
-      }}
-    >
-      <div className="mx-auto flex max-w-4xl justify-end">
+    <main className="app-bg min-h-screen px-4 py-10">
+      <div className="mx-auto flex max-w-4xl items-center justify-end gap-4">
+        <a
+          href="/historique"
+          className="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm text-white backdrop-blur hover:bg-white/20"
+        >
+          Historique
+        </a>
         <LogoutButton />
       </div>
 

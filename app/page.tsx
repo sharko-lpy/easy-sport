@@ -12,11 +12,11 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-4 text-center">
-      <h1 className="text-4xl font-bold text-slate-900">
+    <main className="app-bg flex min-h-screen flex-col items-center justify-center gap-6 px-4 text-center">
+      <h1 className="text-4xl font-bold text-white">
         Coaching sportif, simplifié
       </h1>
-      <p className="max-w-md text-slate-600">
+      <p className="max-w-md text-white/70">
         Crée des programmes d'entraînement, assigne-les à tes athlètes,
         et suis leur progression séance après séance.
       </p>
@@ -29,7 +29,7 @@ export default async function HomePage() {
         </a>
         <a
           href="/signup"
-          className="rounded-md border border-slate-300 px-5 py-2.5 font-medium text-slate-700 hover:bg-slate-50"
+          className="rounded-md border border-white/20 bg-white/10 px-5 py-2.5 font-medium text-white hover:bg-white/20"
         >
           Créer un compte
         </a>

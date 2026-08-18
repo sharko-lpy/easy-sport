@@ -35,14 +35,24 @@ export default async function AdminAthletePage({
   return (
     <>
       <NavBar fullName={profile?.full_name} role={profile?.role} />
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <a href="/admin" className="mb-4 inline-block text-sm text-brand">
-          ← Tous les utilisateurs
-        </a>
-        <h1 className="mb-6 text-2xl font-bold text-slate-900">
-          {athlete.full_name ?? athlete.username ?? "Athlète"}
-        </h1>
-        <AdminAthleteEditor athlete={athlete} adminId={user.id} />
+      <main className="app-bg min-h-screen px-4 py-8">
+        <div className="mx-auto max-w-3xl">
+          <a href="/admin" className="mb-4 inline-block text-sm text-pink-300">
+            ← Tous les utilisateurs
+          </a>
+          <div className="mb-6 flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-white">
+              {athlete.full_name ?? athlete.username ?? "Athlète"}
+            </h1>
+            <a
+              href={`/admin/athletes/${athlete.id}/historique`}
+              className="text-sm text-pink-300 hover:underline"
+            >
+              Voir l'historique
+            </a>
+          </div>
+          <AdminAthleteEditor athlete={athlete} adminId={user.id} />
+        </div>
       </main>
     </>
   );
