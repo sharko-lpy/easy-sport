@@ -119,17 +119,27 @@ create policy "programs: le coach gère ses propres programmes"
   using (auth.uid() = coach_id)
   with check (auth.uid() = coach_id);
 
+-- Un athlète donné suit-il ce programme ? (security definer pour éviter la
+-- récursion : programs -> program_assignments -> programs -> ...)
+create or replace function public.is_program_assigned_to_athlete(p_program_id uuid, p_athlete_id uuid)
+returns boolean
+language sql
+security definer set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from public.program_assignments pa
+    where pa.program_id = p_program_id and pa.athlete_id = p_athlete_id
+  );
+$$;
+
 drop policy if exists "programs: un athlète voit les programmes qui lui sont assignés" on public.programs;
 create policy "programs: un athlète voit les programmes qui lui sont assignés"
   on public.programs for select
   to authenticated
   using (
     is_default = true
-    or exists (
-      select 1 from public.program_assignments pa
-      where pa.program_id = programs.id
-        and pa.athlete_id = auth.uid()
-    )
+    or public.is_program_assigned_to_athlete(id, auth.uid())
   );
 
 drop policy if exists "programs: un admin gère tous les programmes" on public.programs;
@@ -218,11 +228,7 @@ create policy "exercises: un athlète voit les exercices de ses programmes"
       where p.id = program_exercises.program_id
         and p.is_default = true
     )
-    or exists (
-      select 1 from public.program_assignments pa
-      where pa.program_id = program_exercises.program_id
-        and pa.athlete_id = auth.uid()
-    )
+    or public.is_program_assigned_to_athlete(program_exercises.program_id, auth.uid())
   );
 
 drop policy if exists "exercises: un admin gère tous les exercices" on public.program_exercises;
