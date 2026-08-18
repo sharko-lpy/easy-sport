@@ -3,10 +3,9 @@ export type BodyZone = "arms" | "core" | "legs" | "cardio";
 const MUTED = "rgba(255,255,255,0.22)";
 const HL = "url(#bodyGradient)";
 
-// Silhouette façon "carte musculaire" (bras légèrement écartés pour bien
-// distinguer chaque groupe) : la zone ciblée par la catégorie est mise en
-// rose, le reste reste neutre. Le "cardio" met tout le corps en avant avec
-// un cœur en surimpression sur le torse.
+// Silhouette stylisée (poids du corps féminin, hanches marquées) servant
+// d'icône : les zones ciblées sont mises en évidence en rose, le reste reste
+// neutre. Le "cardio" met tout le corps en avant avec un cœur en surimpression.
 export default function BodyDiagram({
   zone,
   className,
@@ -18,13 +17,9 @@ export default function BodyDiagram({
   const isCore = zone === "core" || zone === "cardio";
   const isLegs = zone === "legs" || zone === "cardio";
 
-  const arms = isArms ? HL : MUTED;
-  const core = isCore ? HL : MUTED;
-  const legs = isLegs ? HL : MUTED;
-
   return (
     <svg
-      viewBox="0 0 200 400"
+      viewBox="0 0 160 300"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -35,51 +30,27 @@ export default function BodyDiagram({
         </linearGradient>
       </defs>
 
-      {/* Tête + cou (toujours neutres) */}
-      <circle cx="100" cy="28" r="20" fill={MUTED} />
-      <rect x="90" y="46" width="20" height="14" rx="5" fill={MUTED} />
+      {/* Tête + cou */}
+      <circle cx="80" cy="34" r="20" fill={MUTED} />
+      <rect x="70" y="50" width="20" height="18" rx="6" fill={MUTED} />
 
-      {/* Deltoïdes */}
-      <circle cx="55" cy="78" r="17" fill={arms} />
-      <circle cx="145" cy="78" r="17" fill={arms} />
+      {/* Épaules + bras */}
+      <circle cx="37" cy="68" r="12" fill={isArms ? HL : MUTED} />
+      <circle cx="123" cy="68" r="12" fill={isArms ? HL : MUTED} />
+      <rect x="28" y="68" width="18" height="100" rx="9" fill={isArms ? HL : MUTED} />
+      <rect x="114" y="68" width="18" height="100" rx="9" fill={isArms ? HL : MUTED} />
 
-      {/* Pectoraux */}
-      <ellipse cx="82" cy="95" rx="20" ry="16" fill={core} />
-      <ellipse cx="118" cy="95" rx="20" ry="16" fill={core} />
+      {/* Torse + abdos */}
+      <ellipse cx="80" cy="85" rx="38" ry="32" fill={isCore ? HL : MUTED} />
+      <ellipse cx="80" cy="140" rx="26" ry="28" fill={isCore ? HL : MUTED} />
 
-      {/* Abdos (tablette) */}
-      <rect x="86" y="115" width="12" height="16" rx="4" fill={core} />
-      <rect x="102" y="115" width="12" height="16" rx="4" fill={core} />
-      <rect x="86" y="134" width="12" height="16" rx="4" fill={core} />
-      <rect x="102" y="134" width="12" height="16" rx="4" fill={core} />
-      <rect x="86" y="153" width="12" height="16" rx="4" fill={core} />
-      <rect x="102" y="153" width="12" height="16" rx="4" fill={core} />
-
-      {/* Obliques */}
-      <rect x="72" y="115" width="10" height="55" rx="5" fill={core} />
-      <rect x="118" y="115" width="10" height="55" rx="5" fill={core} />
-
-      {/* Bassin */}
-      <ellipse cx="100" cy="185" rx="38" ry="18" fill={legs} />
-
-      {/* Biceps */}
-      <rect x="30" y="85" width="16" height="70" rx="8" fill={arms} transform="rotate(-12 38 85)" />
-      <rect x="154" y="85" width="16" height="70" rx="8" fill={arms} transform="rotate(12 162 85)" />
-
-      {/* Avant-bras */}
-      <rect x="15" y="150" width="14" height="65" rx="7" fill={arms} transform="rotate(-20 22 150)" />
-      <rect x="171" y="150" width="14" height="65" rx="7" fill={arms} transform="rotate(20 178 150)" />
-
-      {/* Quadriceps */}
-      <rect x="68" y="200" width="28" height="90" rx="14" fill={legs} />
-      <rect x="104" y="200" width="28" height="90" rx="14" fill={legs} />
-
-      {/* Mollets */}
-      <rect x="70" y="295" width="22" height="75" rx="11" fill={legs} />
-      <rect x="108" y="295" width="22" height="75" rx="11" fill={legs} />
+      {/* Hanches + jambes */}
+      <ellipse cx="80" cy="175" rx="34" ry="26" fill={isLegs ? HL : MUTED} />
+      <rect x="54" y="195" width="22" height="95" rx="11" fill={isLegs ? HL : MUTED} />
+      <rect x="84" y="195" width="22" height="95" rx="11" fill={isLegs ? HL : MUTED} />
 
       {zone === "cardio" && (
-        <g transform="translate(100,95) scale(1.8) translate(-12,-13)">
+        <g transform="translate(80,85) scale(1.6) translate(-12,-13)">
           <path
             d="M12 21s-6.716-4.365-9.428-8.428C.29 9.487 1.5 5 6 5c2.3 0 3.7 1.2 4.5 2.6C11.3 6.2 12.7 5 15 5c4.5 0 5.71 4.487 3.428 7.572C18.716 16.635 12 21 12 21z"
             fill="#fff"
