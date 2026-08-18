@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import BodyDiagram from "@/components/BodyDiagram";
 import LogoutButton from "@/components/LogoutButton";
+import WeeklyActivityChart from "@/components/WeeklyActivityChart";
 import { CATEGORIES } from "@/lib/categories";
 
 export default async function ProgramsPage() {
@@ -37,6 +38,13 @@ export default async function ProgramsPage() {
     (categoryPrograms ?? []).map((p) => [p.category, p.id])
   );
 
+  const { data: recentLogs } = await supabase
+    .from("workout_logs")
+    .select("performed_at")
+    .eq("athlete_id", user.id)
+    .order("performed_at", { ascending: false })
+    .limit(100);
+
   return (
     <main className="app-bg min-h-screen px-4 py-10">
       <div className="mx-auto flex max-w-4xl items-center justify-end gap-4">
@@ -63,6 +71,18 @@ export default async function ProgramsPage() {
           </p>
         </div>
       )}
+
+      <div className="mx-auto mt-8 max-w-2xl">
+        <WeeklyActivityChart logs={recentLogs ?? []} />
+        <div className="mt-2 text-center">
+          <a
+            href="/historique"
+            className="text-sm text-white/60 underline decoration-white/30 underline-offset-4 hover:text-white/90"
+          >
+            Voir tout l'historique →
+          </a>
+        </div>
+      </div>
 
       <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
         {CATEGORIES.map((cat) => {
